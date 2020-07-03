@@ -46,7 +46,7 @@ public abstract class PoolBase<P extends PoolBase<P>> extends SqlClientBase<P> i
       throw new IllegalArgumentException("Pool max size must be > 0");
     }
     this.context = context;
-    this.pool = new ConnectionPool(this::connect, maxSize, options.getMaxWaitQueueSize());
+    this.pool = new ConnectionPool(this::connect, context, options);
     this.closeVertx = closeVertx;
   }
 

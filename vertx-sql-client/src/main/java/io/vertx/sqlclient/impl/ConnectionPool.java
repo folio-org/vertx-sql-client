@@ -26,6 +26,7 @@ import io.vertx.core.impl.NoStackTraceThrowable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -35,27 +36,69 @@ import java.util.function.Consumer;
 public class ConnectionPool {
 
   private final Consumer<Handler<AsyncResult<Connection>>> connector;
+  private final Context context;
   private final int maxSize;
   private final ArrayDeque<Promise<Connection>> waiters = new ArrayDeque<>();
   private final Set<PooledConnection> all = new HashSet<>();
   private final ArrayDeque<PooledConnection> available = new ArrayDeque<>();
   private int size;
   private final int maxWaitQueueSize;
+  private final int connectionReleaseDelay;
   private boolean checkInProgress;
   private boolean closed;
 
+  /*
+<<<<<<< HEAD:vertx-sql-client/src/main/java/io/vertx/sqlclient/impl/ConnectionPool.java
   public ConnectionPool(Consumer<Handler<AsyncResult<Connection>>> connector) {
     this(connector, PoolOptions.DEFAULT_MAX_SIZE, PoolOptions.DEFAULT_MAX_WAIT_QUEUE_SIZE);
+=======
+  public ConnectionPool(ConnectionFactory connector, int maxSize) {
+    this(connector, null, new PoolOptions().setMaxSize(maxSize));
+>>>>>>> 1a5953b9... connectionReleaseDelay PoolOption:vertx-sql-client/src/main/java/io/vertx/sqlclient/impl/pool/ConnectionPool.java
   }
 
   public ConnectionPool(Consumer<Handler<AsyncResult<Connection>>> connector, int maxSize) {
     this(connector, maxSize, PoolOptions.DEFAULT_MAX_WAIT_QUEUE_SIZE);
   }
 
+<<<<<<< HEAD:vertx-sql-client/src/main/java/io/vertx/sqlclient/impl/ConnectionPool.java
   public ConnectionPool(Consumer<Handler<AsyncResult<Connection>>> connector, int maxSize, int maxWaitQueueSize) {
     this.maxSize = maxSize;
     this.maxWaitQueueSize = maxWaitQueueSize;
+=======
+  public ConnectionPool(ConnectionFactory connector, Context context, int maxSize, int maxWaitQueueSize) {
+    this(connector, context, new PoolOptions().setMaxSize(maxSize).setMaxWaitQueueSize(maxWaitQueueSize));
+  }
+*/
+  public ConnectionPool(Consumer<Handler<AsyncResult<Connection>>> connector, Context context, PoolOptions poolOptions) {
+    Objects.requireNonNull(connector, "No null connector");
+    this.context = context;
+    this.maxSize = poolOptions.getMaxSize();
+    if (maxSize < 1) {
+      throw new IllegalArgumentException("Pool max size must be > 0");
+    }
+    this.maxWaitQueueSize = poolOptions.getMaxWaitQueueSize();
+    this.connectionReleaseDelay = poolOptions.getConnectionReleaseDelay();
+    if (connectionReleaseDelay > 0 && context == null) {
+      throw new NullPointerException("context must not be null for connectionReleaseDelay");
+    }
     this.connector = connector;
+  }
+
+  public ConnectionPool(Consumer<Handler<AsyncResult<Connection>>> connector) {
+    this(connector, null, new PoolOptions());
+  }
+
+  public ConnectionPool(Consumer<Handler<AsyncResult<Connection>>> connector, int maxSize) {
+    this(connector, null, new PoolOptions().setMaxSize(maxSize));
+  }
+
+  public ConnectionPool(Consumer<Handler<AsyncResult<Connection>>> connector, int maxSize, int maxWaitQueueSize) {
+    this(connector, null, new PoolOptions().setMaxSize(maxSize).setMaxWaitQueueSize(maxWaitQueueSize));
+  }
+
+  public int allSize() {
+    return all.size();
   }
 
   public int available() {
@@ -97,6 +140,7 @@ public class ConnectionPool {
 
     private final Connection conn;
     private Holder holder;
+    private Long idleTimer;
 
     PooledConnection(Connection conn) {
       this.conn = conn;
@@ -106,7 +150,7 @@ public class ConnectionPool {
     public boolean isSsl() {
       return conn.isSsl();
     }
-    
+
     @Override
     public DatabaseMetadata getDatabaseMetaData() {
       return conn.getDatabaseMetaData();
@@ -121,6 +165,7 @@ public class ConnectionPool {
      * Close the underlying connection
      */
     private void close() {
+      cancelIdleTimer();
       conn.close(this);
     }
 
@@ -138,7 +183,7 @@ public class ConnectionPool {
         throw new IllegalStateException();
       }
       this.holder = null;
-      release(this);
+      addToPool();
     }
 
     @Override
@@ -179,12 +224,37 @@ public class ConnectionPool {
     public int getSecretKey() {
       return conn.getSecretKey();
     }
-  }
 
-  private void release(PooledConnection proxy) {
-    if (all.contains(proxy)) {
-      available.add(proxy);
+    private void addToPool() {
+      if (! all.contains(this)) {
+        return;
+      }
+      available.add(this);
       check();
+      if (connectionReleaseDelay <= 0 || ! this.equals(available.peekLast())) {
+        return;
+      }
+      idleTimer = context.owner().setTimer(connectionReleaseDelay, t -> expire());
+    }
+
+    /**
+     * Remove from {@code available} and {@code all} and close connection.
+     */
+    private void expire() {
+      if (idleTimer == null) {
+        return;
+      }
+      idleTimer = null;
+      available.remove(this);
+      all.remove(this);
+      close();
+    }
+
+    private void cancelIdleTimer() {
+      if (idleTimer != null) {
+        context.owner().cancelTimer(idleTimer);
+        idleTimer = null;
+      }
     }
   }
 
@@ -198,6 +268,7 @@ public class ConnectionPool {
         while (waiters.size() > 0) {
           if (available.size() > 0) {
             PooledConnection proxy = available.poll();
+            proxy.cancelIdleTimer();
             Promise<Connection> waiter = waiters.poll();
             waiter.complete(proxy);
           } else {
