@@ -105,8 +105,10 @@
   <modules>
     <module>vertx-sql-client</module>
     <module>vertx-pg-client</module>
+<!-- not needed for FOLIO:
     <module>vertx-mysql-client</module>
     <module>vertx-db2-client</module>
+-->
   </modules>
 
   <distributionManagement>
