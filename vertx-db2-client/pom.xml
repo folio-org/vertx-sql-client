@@ -27,9 +27,9 @@
 
   <artifactId>vertx-db2-client</artifactId>
 
-  <name>Vertx DB2 Client</name>
-  <url>https://github.com/eclipse-vertx/vertx-sql-client</url>
-  <description>The Reactive DB2 client</description>
+  <name>Vertx DB2 Client, FOLIO fork</name>
+  <url>https://github.com/folio-org/vertx-sql-client</url>
+  <description>The Reactive DB2 client, FOLIO fork</description>
 
   <properties>
     <doc.skip>false</doc.skip>

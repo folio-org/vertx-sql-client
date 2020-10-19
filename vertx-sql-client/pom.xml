@@ -27,6 +27,11 @@
 
   <artifactId>vertx-sql-client</artifactId>
 
+  <name>Vertx SQL Client, FOLIO fork</name>
+  <url>https://github.com/folio-org/vertx-sql-client</url>
+  <description>The Reactive SQL Client, FOLIO fork</description>
+
+
   <properties>
     <docs.dir>${project.basedir}/src/main/docs</docs.dir>
     <generated.dir>${project.basedir}/src/main/generated</generated.dir>
