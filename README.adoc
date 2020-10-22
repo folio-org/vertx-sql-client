@@ -3,6 +3,6 @@
 This is the FOLIO fork of https://github.com/eclipse-vertx/vertx-sql-client
 and has these patches been applied to the master and 3.9 branch:
 
-* [FOLIO-2840: Unsigned long HexSequence for name of PgPreparedStatement](https://github.com/folio-org/vertx-sql-client/pull/2)
-* [RMB-739: connectionReleaseDelay PoolOption](https://github.com/folio-org/vertx-sql-client/pull/1)
+* https://github.com/folio-org/vertx-sql-client/pull/2[FOLIO-2840: Unsigned long HexSequence for name of PgPreparedStatement]
+* https://github.com/folio-org/vertx-sql-client/pull/1[RMB-739: connectionReleaseDelay PoolOption]
 
