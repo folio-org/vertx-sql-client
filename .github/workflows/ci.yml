@@ -20,10 +20,6 @@ jobs:
         jdk: [8]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: maven-java-${{ matrix.jdk }}
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install JDK
@@ -32,24 +28,15 @@ jobs:
           java-version: ${{ matrix.jdk }}
       - name: Run tests
         run: mvn -q clean verify -B -DskipDefault -P ${{ matrix.profile }}
-      - name: Publish Unit Test Results
-        uses: scacap/action-surefire-report@v1
-        if: always()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
   Deploy:
     name: Deploy to OSSRH
-    if: ${{ github.repository_owner == 'eclipse-vertx' && github.event_name == 'push' }}
+    if: ${{ github.repository_owner == 'vert-x3' && (github.event_name == 'push' || github.event_name == 'schedule') }}
     needs: Test
     runs-on: ubuntu-latest
     env:
       SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
       SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
     steps:
-      - uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: maven-java-${{ matrix.jdk }}
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install JDK

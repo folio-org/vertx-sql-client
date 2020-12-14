@@ -71,57 +71,57 @@ public class RowImpl extends ArrayTuple implements Row {
     if (type.isArray()) {
       Class<?> componentType = type.getComponentType();
       if (componentType == Boolean.class) {
-        return type.cast(getBooleanArray(position));
+        return type.cast(getArrayOfBooleans(position));
       } else if (componentType == Short.class) {
-        return type.cast(getShortArray(position));
+        return type.cast(getArrayOfShorts(position));
       } else if (componentType == Integer.class) {
-        return type.cast(getIntegerArray(position));
+        return type.cast(getArrayOfIntegers(position));
       } else if (componentType == Long.class) {
-        return type.cast(getLongArray(position));
+        return type.cast(getArrayOfLongs(position));
       } else if (componentType == Float.class) {
-        return type.cast(getFloatArray(position));
+        return type.cast(getArrayOfFloats(position));
       } else if (componentType == Double.class) {
-        return type.cast(getDoubleArray(position));
+        return type.cast(getArrayOfDoubles(position));
       } else if (componentType == String.class) {
-        return type.cast(getStringArray(position));
+        return type.cast(getArrayOfStrings(position));
       } else if (componentType == Buffer.class) {
-        return type.cast(getBufferArray(position));
+        return type.cast(getArrayOfBuffers(position));
       } else if (componentType == UUID.class) {
-        return type.cast(getUUIDArray(position));
+        return type.cast(getArrayOfUUIDs(position));
       } else if (componentType == LocalDate.class) {
-        return type.cast(getLocalDateArray(position));
+        return type.cast(getArrayOfLocalDates(position));
       } else if (componentType == LocalTime.class) {
-        return type.cast(getLocalTimeArray(position));
+        return type.cast(getArrayOfLocalTimes(position));
       } else if (componentType == OffsetTime.class) {
-        return type.cast(getOffsetTimeArray(position));
+        return type.cast(getArrayOfOffsetTimes(position));
       } else if (componentType == LocalDateTime.class) {
-        return type.cast(getLocalDateTimeArray(position));
+        return type.cast(getArrayOfLocalDateTimes(position));
       } else if (componentType == OffsetDateTime.class) {
-        return type.cast(getOffsetDateTimeArray(position));
+        return type.cast(getArrayOfOffsetDateTimes(position));
       } else if (componentType == Interval.class) {
-        return type.cast(getIntervalArray(position));
+        return type.cast(getArrayOfIntervals(position));
       } else if (componentType == Numeric.class) {
-        return type.cast(getNumericArray(position));
+        return type.cast(getArrayOfNumerics(position));
       } else if (componentType == Point.class) {
-        return type.cast(getPointArray(position));
+        return type.cast(getArrayOfPoints(position));
       } else if (componentType == Line.class) {
-        return type.cast(getLineArray(position));
+        return type.cast(getArrayOfLines(position));
       } else if (componentType == LineSegment.class) {
-        return type.cast(getLineSegmentArray(position));
+        return type.cast(getArrayOfLineSegments(position));
       } else if (componentType == Path.class) {
-        return type.cast(getPathArray(position));
+        return type.cast(getArrayOfPaths(position));
       } else if (componentType == Polygon.class) {
-        return type.cast(getPolygonArray(position));
+        return type.cast(getArrayOfPolygons(position));
       } else if (componentType == Circle.class) {
-        return type.cast(getCircleArray(position));
+        return type.cast(getArrayOfCircles(position));
       } else if (componentType == Interval.class) {
-        return type.cast(getIntervalArray(position));
+        return type.cast(getArrayOfIntervals(position));
       } else if (componentType == Box.class) {
-        return type.cast(getBoxArray(position));
+        return type.cast(getArrayOfBoxs(position));
       } else if (componentType == Object.class) {
         return type.cast(getJsonArray_(position));
       } else if (componentType.isEnum()) {
-        return type.cast(getEnumArray(componentType, position));
+        return type.cast(getArrayOfEnums(componentType, position));
       }
     } else {
       if (type == Boolean.class) {
@@ -171,9 +171,9 @@ public class RowImpl extends ArrayTuple implements Row {
       } else if (type == Box.class) {
         return type.cast(getBox(position));
       } else if (type == JsonObject.class) {
-        return type.cast(getJsonElement(position));
+        return type.cast(getJson(position));
       } else if (type == JsonArray.class) {
-        return type.cast(getJsonElement(position));
+        return type.cast(getJson(position));
       } else if (type == Object.class) {
         return type.cast(getValue(position));
       } else if (type.isEnum()) {
@@ -238,39 +238,39 @@ public class RowImpl extends ArrayTuple implements Row {
     return (Object[]) getValue(pos);
   }
 
-  private Point[] getPointArray(int pos) {
+  private Point[] getArrayOfPoints(int pos) {
     return (Point[]) getValue(pos);
   }
 
-  private Line[] getLineArray(int pos) {
+  private Line[] getArrayOfLines(int pos) {
     return (Line[]) getValue(pos);
   }
 
-  private LineSegment[] getLineSegmentArray(int pos) {
+  private LineSegment[] getArrayOfLineSegments(int pos) {
     return (LineSegment[]) getValue(pos);
   }
 
-  private Box[] getBoxArray(int pos) {
+  private Box[] getArrayOfBoxs(int pos) {
     return (Box[]) getValue(pos);
   }
 
-  private Path[] getPathArray(int pos) {
+  private Path[] getArrayOfPaths(int pos) {
     return (Path[]) getValue(pos);
   }
 
-  private Polygon[] getPolygonArray(int pos) {
+  private Polygon[] getArrayOfPolygons(int pos) {
     return (Polygon[]) getValue(pos);
   }
 
-  private Circle[] getCircleArray(int pos) {
+  private Circle[] getArrayOfCircles(int pos) {
     return (Circle[]) getValue(pos);
   }
 
-  private Interval[] getIntervalArray(int pos) {
+  private Interval[] getArrayOfIntervals(int pos) {
     return (Interval[]) getValue(pos);
   }
 
-  private Object[] getEnumArray(Class enumType, int pos) {
+  private Object[] getArrayOfEnums(Class enumType, int pos) {
     Object val = getValue(pos);
     if (val instanceof String[]) {
       String[] array = (String[]) val;

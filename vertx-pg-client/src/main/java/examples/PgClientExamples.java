@@ -272,6 +272,13 @@ public class PgClientExamples {
     PgPool client2 = PgPool.pool(vertx, connectOptions, poolOptions);
   }
 
+  public void reconnectAttempts(PgConnectOptions options) {
+    // The client will try to connect at most 3 times at a 1 second interval
+    options
+      .setReconnectAttempts(2)
+      .setReconnectInterval(1000);
+  }
+
   public void typeMapping01(Pool pool) {
     pool
       .query("SELECT 1::BIGINT \"VAL\"")
@@ -461,10 +468,10 @@ public class PgClientExamples {
     Tuple tuple = Tuple.of(new String[]{ "a", "tuple", "with", "arrays" });
 
     // Add a string array to the tuple
-    tuple.addStringArray(new String[]{"another", "array"});
+    tuple.addArrayOfString(new String[]{"another", "array"});
 
     // Get the first array of string
-    String[] array = tuple.getStringArray(0);
+    String[] array = tuple.getArrayOfStrings(0);
   }
 
   public void infinitySpecialValue(SqlClient client) {
