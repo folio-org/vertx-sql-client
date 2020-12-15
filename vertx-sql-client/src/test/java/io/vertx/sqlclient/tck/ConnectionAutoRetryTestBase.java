@@ -149,7 +149,8 @@ public abstract class ConnectionAutoRetryTestBase {
       this.counter = new AtomicInteger(retryTimes);
     }
 
-    public void initialize(int targetPort, String targetHost, Handler<AsyncResult<Void>> resultHandler) {
+    public void initialize(int targetPort, String xtargetHost, Handler<AsyncResult<Void>> resultHandler) {
+      String targetHost = "localhost";
       LOGGER.info("initialize: " + targetHost + ":" + targetPort);
       this.netClient = vertx.createNetClient();
       this.netServer = vertx.createNetServer()
