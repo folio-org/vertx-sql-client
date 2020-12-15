@@ -41,6 +41,7 @@ public class PgConnectionAutoRetryTest extends ConnectionAutoRetryTestBase {
   @Override
   protected void initialConnector(int proxyPort) {
     SqlConnectOptions proxyOptions = new PgConnectOptions(options);
+    proxyOptions.setHost("localhost");
     proxyOptions.setPort(proxyPort);
     connectionConnector = ClientConfig.CONNECT.connect(vertx, proxyOptions);
     poolConnector = ClientConfig.POOLED.connect(vertx, proxyOptions);
