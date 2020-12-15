@@ -119,6 +119,9 @@
               <unix.socket.directory>${unix.socket.directory}</unix.socket.directory>
               <unix.socket.port>${unix.socket.port}</unix.socket.port>
             </systemPropertyVariables>
+            <includes>
+              <include>**/PgConnectionAutoRetryTest.java</include>
+            </includes>
             <excludes>
               <exclude>io/vertx/pgclient/it/**</exclude>
             </excludes>
@@ -155,32 +158,6 @@
                 <descriptorRef>none</descriptorRef>
               </descriptorRefs>
               <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.21.0</version>
-        <executions>
-          <execution>
-            <id>env-test</id>
-            <goals>
-              <goal>integration-test</goal>
-            </goals>
-            <phase>integration-test</phase>
-            <configuration>
-              <includes>
-                <include>io/vertx/pgclient/it/EnvTest.java</include>
-              </includes>
-              <environmentVariables>
-                <PGHOSTADDR>test_host</PGHOSTADDR>
-                <PGDATABASE>test_database</PGDATABASE>
-                <PGPORT>1234</PGPORT>
-                <PGUSER>test_user</PGUSER>
-                <PGPASSWORD>test_password</PGPASSWORD>
-                <PGSSLMODE>require</PGSSLMODE>
-              </environmentVariables>
             </configuration>
           </execution>
         </executions>

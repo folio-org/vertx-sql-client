@@ -150,11 +150,13 @@ public abstract class ConnectionAutoRetryTestBase {
     }
 
     public void initialize(int targetPort, String targetHost, Handler<AsyncResult<Void>> resultHandler) {
+      LOGGER.info("initialize: " + targetHost + ":" + targetPort);
       this.netClient = vertx.createNetClient();
       this.netServer = vertx.createNetServer()
         .connectHandler(frontendSocket -> {
           LOGGER.info("Proxy: frontend socket connected");
           frontendSocket.handler(outbound -> {
+            LOGGER.info("Proxy: frontend socket handler");
             NetSocket backendSocket = frontendSocketToBackendSocket.get(frontendSocket);
             if (backendSocket == null) {
               // might not connected yet, buffer the request first
@@ -170,6 +172,7 @@ public abstract class ConnectionAutoRetryTestBase {
             LOGGER.info("Proxy: frontend socket closed by proxy");
             frontendSocket.close();
           } else {
+            LOGGER.info("connect to database: " + targetHost + ":" + targetPort);
             // pipe the stream to the database otherwise
             netClient.connect(targetPort, targetHost)
               .onSuccess(backendSocket -> {
