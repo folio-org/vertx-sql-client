@@ -6,3 +6,48 @@ and has these patches been applied to the master and 3.9 branch:
 * https://github.com/folio-org/vertx-sql-client/pull/2[FOLIO-2840: Unsigned long HexSequence for name of PgPreparedStatement]
 * https://github.com/folio-org/vertx-sql-client/pull/1[RMB-739: connectionReleaseDelay PoolOption]
 
+== Example how to release the FOLIO fork version
+
+Switch to Java 8 if you currently use Java 11.
+
+This example shows how to release 4.0.0-FOLIO.
+
+It is based on the upstream release 4.0.0.
+
+Search for the upstream -SNAPSHOT commit immediately after that release.
+
+We need a -SNAPSHOT to run our "mvn release", otherwise "mvn release" will fail.
+
+We find the upstream commit "Releasing 4.0.1-SNAPSHOT" = ef3bc5e48cf84945a08215b7cdf0511e2d712c13.
+
+Go to folio-org/master branch.
+
+We cannot merge commits from other branches into master because commits from Vert.x developers
+are rejected because they haven't signed the FOLIO Contributor License Agreement (CLA).
+
+Execute
+
+`git merge ef3bc5e48cf84945a08215b7cdf0511e2d712c13`
+
+`vim pom.xml`   # change stack.version to 4.0.0
+
+Attention! The next command will automatically push the current branch to GitHub folio-org/vertx-sql-client!
+
+`mvn -DautoVersionSubmodules=true release:clean release:prepare`
+
+Use these versions:
+
+What is the release version for "Vertx SQL Client parent, FOLIO fork"? (io.vertx:vertx-sql-client-parent) 4.0.0: :
+
+4.0.0-FOLIO
+
+What is SCM release tag or label for "Vertx SQL Client parent, FOLIO fork"? (io.vertx:vertx-sql-client-parent) vertx-sql-client-parent-4.0.0-FOLIO: :
+
+v4.0.0-FOLIO
+
+What is the new development version for "Vertx SQL Client parent, FOLIO fork"? (io.vertx:vertx-sql-client-parent) 4.0.1-FOLIO-SNAPSHOT: :
+
+4.0.1-SNAPSHOT
+
+The new development version is the current upstream version to avoid any merge conflict next time.
+
