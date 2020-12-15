@@ -196,8 +196,10 @@ public abstract class ConnectionAutoRetryTestBase {
       this.netServer.listen()
         .onComplete(ar -> {
           if (ar.succeeded()) {
+        	  System.out.println("netServer listens on " + ar.result().actualPort());
             resultHandler.handle(Future.succeededFuture());
           } else {
+        	  System.out.println("netServer listen fails: " + ar.cause().getMessage());
             resultHandler.handle(Future.failedFuture(ar.cause()));
           }
         });
