@@ -145,9 +145,6 @@
     </profile>
     <profile>
       <id>MySQL-8.0</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
       <properties>
         <testing.mysql.database.server>mysql</testing.mysql.database.server>
         <testing.mysql.database.version>8.0</testing.mysql.database.version>
