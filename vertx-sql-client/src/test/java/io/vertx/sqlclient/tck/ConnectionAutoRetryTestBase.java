@@ -59,7 +59,7 @@ public abstract class ConnectionAutoRetryTestBase {
     options.setReconnectAttempts(3);
     options.setReconnectInterval(1000);
     UnstableProxyServer unstableProxyServer = new UnstableProxyServer(0);
-    unstableProxyServer.initialize(options.getPort(), options.getHost(), ctx.asyncAssertSuccess(v -> {
+    unstableProxyServer.initialize(options, ctx.asyncAssertSuccess(v -> {
       initialConnector(unstableProxyServer.port());
       connectionConnector.connect(ctx.asyncAssertSuccess(conn -> {
         conn.close();
@@ -73,7 +73,7 @@ public abstract class ConnectionAutoRetryTestBase {
     options.setReconnectAttempts(3);
     options.setReconnectInterval(1000);
     UnstableProxyServer unstableProxyServer = new UnstableProxyServer(0);
-    unstableProxyServer.initialize(options.getPort(), options.getHost(), ctx.asyncAssertSuccess(v -> {
+    unstableProxyServer.initialize(options, ctx.asyncAssertSuccess(v -> {
       initialConnector(unstableProxyServer.port());
       poolConnector.connect(ctx.asyncAssertSuccess(conn -> {
         conn.close();
@@ -86,7 +86,7 @@ public abstract class ConnectionAutoRetryTestBase {
     options.setReconnectAttempts(1);
     options.setReconnectInterval(1000);
     UnstableProxyServer unstableProxyServer = new UnstableProxyServer(2);
-    unstableProxyServer.initialize(options.getPort(), options.getHost(), ctx.asyncAssertSuccess(v -> {
+    unstableProxyServer.initialize(options, ctx.asyncAssertSuccess(v -> {
       initialConnector(unstableProxyServer.port());
       connectionConnector.connect(ctx.asyncAssertFailure(throwable -> {
       }));
@@ -98,7 +98,7 @@ public abstract class ConnectionAutoRetryTestBase {
     options.setReconnectAttempts(1);
     options.setReconnectInterval(1000);
     UnstableProxyServer unstableProxyServer = new UnstableProxyServer(2);
-    unstableProxyServer.initialize(options.getPort(), options.getHost(), ctx.asyncAssertSuccess(v -> {
+    unstableProxyServer.initialize(options, ctx.asyncAssertSuccess(v -> {
       initialConnector(unstableProxyServer.port());
       poolConnector.connect(ctx.asyncAssertFailure(throwable -> {
       }));
@@ -110,7 +110,7 @@ public abstract class ConnectionAutoRetryTestBase {
     options.setReconnectAttempts(1);
     options.setReconnectInterval(1000);
     UnstableProxyServer unstableProxyServer = new UnstableProxyServer(1);
-    unstableProxyServer.initialize(options.getPort(), options.getHost(), ctx.asyncAssertSuccess(v -> {
+    unstableProxyServer.initialize(options, ctx.asyncAssertSuccess(v -> {
       initialConnector(unstableProxyServer.port());
       connectionConnector.connect(ctx.asyncAssertSuccess(connection -> {
         connection.close();
@@ -123,7 +123,7 @@ public abstract class ConnectionAutoRetryTestBase {
     options.setReconnectAttempts(1);
     options.setReconnectInterval(1000);
     UnstableProxyServer unstableProxyServer = new UnstableProxyServer(1);
-    unstableProxyServer.initialize(options.getPort(), options.getHost(), ctx.asyncAssertSuccess(v -> {
+    unstableProxyServer.initialize(options, ctx.asyncAssertSuccess(v -> {
       initialConnector(unstableProxyServer.port());
       poolConnector.connect(ctx.asyncAssertSuccess(conn -> {
         conn.close();
@@ -149,8 +149,7 @@ public abstract class ConnectionAutoRetryTestBase {
       this.counter = new AtomicInteger(retryTimes);
     }
 
-    public void initialize(int targetPort, String targetHost, Handler<AsyncResult<Void>> resultHandler) {
-      LOGGER.info("initialize: " + targetHost + ":" + targetPort);
+    public void initialize(SqlConnectOptions targetOptions, Handler<AsyncResult<Void>> resultHandler) {
       this.netClient = vertx.createNetClient();
       this.netServer = vertx.createNetServer()
         .connectHandler(frontendSocket -> {
@@ -172,9 +171,9 @@ public abstract class ConnectionAutoRetryTestBase {
             LOGGER.info("Proxy: frontend socket closed by proxy");
             frontendSocket.close();
           } else {
-            LOGGER.info("connect to database: " + targetHost + ":" + targetPort);
+            LOGGER.info("connect to database: " + targetOptions.getHost() + ":" + targetOptions.getPort());
             // pipe the stream to the database otherwise
-            netClient.connect(targetPort, targetHost)
+            netClient.connect(targetOptions.getPort(), targetOptions.getHost())
               .onSuccess(backendSocket -> {
                 LOGGER.info("Proxy: backend socket connected");
                 frontendSocketToBackendSocket.put(frontendSocket, backendSocket);
