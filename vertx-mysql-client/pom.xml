@@ -87,6 +87,9 @@
             <systemPropertyVariables>
               <target.dir>${project.build.directory}</target.dir>
             </systemPropertyVariables>
+            <includes>
+              <include>**/MySQLConnectionAutoRetryTest.java</include>
+            </includes>
             <excludes>
               <exclude>io/vertx/pgclient/it/**</exclude>
             </excludes>

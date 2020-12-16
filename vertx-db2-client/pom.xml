@@ -99,6 +99,9 @@
             <systemPropertyVariables>
               <target.dir>${project.build.directory}</target.dir>
             </systemPropertyVariables>
+            <includes>
+              <include>**/DB2ConnectionAutoRetryTest.java</include>
+            </includes>
             <excludes>
               <exclude>io/vertx/db2client/it/**</exclude>
             </excludes>

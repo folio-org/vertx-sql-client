@@ -106,10 +106,7 @@
     <profile>
       <id>default</id>
       <activation>
-        <property>
-          <name>skipDefault</name>
-          <value>!true</value>
-        </property>
+        <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
         <module>vertx-sql-client</module>
@@ -148,6 +145,9 @@
     </profile>
     <profile>
       <id>MySQL-8.0</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <testing.mysql.database.server>mysql</testing.mysql.database.server>
         <testing.mysql.database.version>8.0</testing.mysql.database.version>
@@ -192,6 +192,9 @@
     </profile>
     <profile>
       <id>MSSQL-2017-CU12</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <modules>
         <module>vertx-sql-client</module>
         <module>vertx-mssql-client</module>
@@ -199,6 +202,9 @@
     </profile>
     <profile>
       <id>DB2-11.5</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <modules>
         <module>vertx-sql-client</module>
         <module>vertx-db2-client</module>
