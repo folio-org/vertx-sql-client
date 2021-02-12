@@ -17,6 +17,7 @@
 
 package io.vertx.pgclient;
 
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.PoolOptions;
 import io.vertx.sqlclient.Row;
@@ -29,6 +30,7 @@ import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -60,7 +62,7 @@ public abstract class PgPoolTestBase extends PgTestBase {
 
   @Test
   public void testPool(TestContext ctx) {
-    int num = 5000;
+    int num = 200;
     Async async = ctx.async(num);
     PgPool pool = createPool(options, 4);
     for (int i = 0;i < num;i++) {
@@ -70,7 +72,7 @@ public abstract class PgPoolTestBase extends PgTestBase {
             SqlResult result = ar.result();
             ctx.assertEquals(10000, result.size());
           } else {
-            ctx.assertEquals("closed", ar.cause().getMessage());
+            assertClosedFailure(ctx, ar);
           }
           conn.close();
           async.countDown();
@@ -81,7 +83,7 @@ public abstract class PgPoolTestBase extends PgTestBase {
 
   @Test
   public void testQuery(TestContext ctx) {
-    int num = 1000;
+    int num = 200;
     Async async = ctx.async(num);
     PgPool pool = createPool(options, 4);
     for (int i = 0;i < num;i++) {
@@ -90,7 +92,7 @@ public abstract class PgPoolTestBase extends PgTestBase {
           SqlResult result = ar.result();
           ctx.assertEquals(10000, result.size());
         } else {
-          ctx.assertEquals("closed", ar.cause().getMessage());
+          assertClosedFailure(ctx, ar);
         }
         async.countDown();
       });
@@ -118,7 +120,7 @@ public abstract class PgPoolTestBase extends PgTestBase {
           ctx.assertEquals(1, result.size());
         } else {
           ar.cause().printStackTrace();
-          ctx.assertEquals("closed", ar.cause().getMessage());
+          assertClosedFailure(ctx, ar);
         }
         async.countDown();
       });
@@ -136,7 +138,7 @@ public abstract class PgPoolTestBase extends PgTestBase {
           SqlResult result = ar.result();
           ctx.assertEquals(1, result.rowCount());
         } else {
-          ctx.assertEquals("closed", ar.cause().getMessage());
+          assertClosedFailure(ctx, ar);
         }
         async.countDown();
       });
@@ -154,7 +156,7 @@ public abstract class PgPoolTestBase extends PgTestBase {
           SqlResult result = ar.result();
           ctx.assertEquals(1, result.rowCount());
         } else {
-          ctx.assertEquals("closed", ar.cause().getMessage());
+          assertClosedFailure(ctx, ar);
         }
         async.countDown();
       });

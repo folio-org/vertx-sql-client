@@ -19,14 +19,15 @@ package io.vertx.pgclient.impl;
 
 import io.vertx.core.impl.CloseFuture;
 import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.impl.EventLoopContext;
 import io.vertx.core.spi.metrics.ClientMetrics;
 import io.vertx.core.spi.metrics.VertxMetrics;
 import io.vertx.pgclient.*;
 import io.vertx.sqlclient.PoolOptions;
 import io.vertx.sqlclient.impl.Connection;
+import io.vertx.sqlclient.impl.ConnectionFactory;
 import io.vertx.sqlclient.impl.PoolBase;
 import io.vertx.sqlclient.impl.SqlConnectionImpl;
-import io.vertx.core.*;
 import io.vertx.sqlclient.impl.tracing.QueryTracer;
 
 /**
@@ -44,7 +45,8 @@ public class PgPoolImpl extends PoolBase<PgPoolImpl> implements PgPool {
     QueryTracer tracer = context.tracer() == null ? null : new QueryTracer(context.tracer(), connectOptions);
     VertxMetrics vertxMetrics = context.owner().metricsSPI();
     ClientMetrics metrics = vertxMetrics != null ? vertxMetrics.createClientMetrics(connectOptions.getSocketAddress(), "sql", connectOptions.getMetricsName()) : null;
-    PgPoolImpl pool = new PgPoolImpl(context, new PgConnectionFactory(context, connectOptions), tracer, metrics, poolOptions);
+    EventLoopContext eventLoopContext = ConnectionFactory.asEventLoopContext(context);
+    PgPoolImpl pool = new PgPoolImpl(eventLoopContext, new PgConnectionFactory(eventLoopContext, connectOptions), tracer, metrics, poolOptions);
     CloseFuture closeFuture = pool.closeFuture();
     if (closeVertx) {
       closeFuture.onComplete(ar -> context.owner().close());
@@ -56,7 +58,7 @@ public class PgPoolImpl extends PoolBase<PgPoolImpl> implements PgPool {
 
   private final PgConnectionFactory factory;
 
-  private PgPoolImpl(ContextInternal context, PgConnectionFactory factory, QueryTracer tracer, ClientMetrics metrics, PoolOptions poolOptions) {
+  private PgPoolImpl(EventLoopContext context, PgConnectionFactory factory, QueryTracer tracer, ClientMetrics metrics, PoolOptions poolOptions) {
     super(context, factory, tracer, metrics, poolOptions);
     this.factory = factory;
   }
@@ -65,11 +67,6 @@ public class PgPoolImpl extends PoolBase<PgPoolImpl> implements PgPool {
   public int appendQueryPlaceholder(StringBuilder queryBuilder, int index, int current) {
     queryBuilder.append('$').append(1 + index);
     return index;
-  }
-
-  @Override
-  public void connect(Handler<AsyncResult<Connection>> completionHandler) {
-    factory.connect().onComplete(completionHandler);
   }
 
   @Override

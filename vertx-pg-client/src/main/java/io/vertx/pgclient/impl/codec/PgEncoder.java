@@ -63,12 +63,10 @@ final class PgEncoder extends ChannelOutboundHandlerAdapter {
   private final ArrayDeque<PgCommandCodec<?, ?>> inflight;
   private ChannelHandlerContext ctx;
   private ByteBuf out;
-  private PgDecoder dec;
   private final HexSequence psSeq = new HexSequence(); // used for generating named prepared statement name
 
-  PgEncoder(PgDecoder dec, ArrayDeque<PgCommandCodec<?, ?>> inflight) {
+  PgEncoder(ArrayDeque<PgCommandCodec<?, ?>> inflight) {
     this.inflight = inflight;
-    this.dec = dec;
   }
 
   void write(CommandBase<?> cmd) {
@@ -138,7 +136,7 @@ final class PgEncoder extends ChannelOutboundHandlerAdapter {
     if (out != null) {
       ByteBuf buff = out;
       out = null;
-      ctx.writeAndFlush(buff);
+      ctx.writeAndFlush(buff, ctx.voidPromise());
     } else {
       ctx.flush();
     }

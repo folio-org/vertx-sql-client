@@ -21,6 +21,8 @@ import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.impl.EventLoopContext;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -228,13 +230,11 @@ public class ConnectionPoolTest {
     ConnectionPool[] poolRef = new ConnectionPool[1];
     ConnectionPool pool = new ConnectionPool(new ConnectionFactory() {
       @Override
-      public Future<Connection> connect() {
-        Promise<Connection> promise = Promise.promise();
+      public void connect(Promise<Connection> promise) {
         poolRef[0].acquire(holder2);
         assertFalse(holder2.isComplete());
         promise.complete(conn);
         assertFalse(holder2.isComplete());
-        return promise.future();
       }
     }, 1, 0);
     poolRef[0] = pool;
@@ -279,11 +279,16 @@ public class ConnectionPoolTest {
     new ConnectionPool(new ConnectionQueue(), null, new PoolOptions().setConnectionReleaseDelay(60000));
   }
 
+  private static EventLoopContext eventLoopContext(Vertx vertx) {
+    ContextInternal contextInternal = (ContextInternal) vertx.getOrCreateContext();
+    return ConnectionFactory.asEventLoopContext(contextInternal);
+  }
+
   @Test
   public void testExpire(TestContext ctx) {
     Async async = ctx.async();
     Vertx vertx = Vertx.vertx();
-    Context context = Vertx.vertx().getOrCreateContext();
+    EventLoopContext context = eventLoopContext(vertx);
     context.runOnContext(run -> ctx.verify(verify -> {
       ConnectionQueue queue = new ConnectionQueue();
       PoolOptions poolOptions = new PoolOptions()
@@ -312,7 +317,7 @@ public class ConnectionPoolTest {
   public void testRecycleNoIdleTimer(TestContext ctx) {
     Async async = ctx.async();
     Vertx vertx = Vertx.vertx();
-    Context context = Vertx.vertx().getOrCreateContext();
+    EventLoopContext context = eventLoopContext(vertx);
     context.runOnContext(run -> ctx.verify(verify -> {
       ConnectionQueue queue = new ConnectionQueue();
       PoolOptions poolOptions = new PoolOptions()
@@ -342,7 +347,7 @@ public class ConnectionPoolTest {
   public void testCancelIdleTimer(TestContext ctx) {
     Async async = ctx.async();
     Vertx vertx = Vertx.vertx();
-    Context context = Vertx.vertx().getOrCreateContext();
+    EventLoopContext context = eventLoopContext(vertx);
     context.runOnContext(run -> ctx.verify(verify -> {
       ConnectionQueue queue = new ConnectionQueue();
       PoolOptions poolOptions = new PoolOptions()

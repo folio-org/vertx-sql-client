@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>vertx-sql-client-parent</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Vertx SQL Client parent, FOLIO fork</name>
@@ -47,7 +47,7 @@
   </scm>
 
   <properties>
-    <stack.version>4.0.0</stack.version>
+    <stack.version>4.0.2</stack.version>
     <doc.skip>true</doc.skip>
     <gpg.skip>true</gpg.skip> <!-- FOLIO doesn't sign -->
     <jmh.version>1.19</jmh.version>
@@ -60,7 +60,7 @@
     <jar.manifest>${project.basedir}/src/main/resources/META-INF/MANIFEST.MF</jar.manifest>
     <!-- We skip sources jar generation as we do it with the assembly plugin to have greater control over the content -->
     <source.skip>true</source.skip>
-    <testcontainers.version>1.12.4</testcontainers.version>
+    <testcontainers.version>1.15.2</testcontainers.version>
   </properties>
 
   <dependencyManagement>

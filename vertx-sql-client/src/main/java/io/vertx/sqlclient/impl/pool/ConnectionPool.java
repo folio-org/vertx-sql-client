@@ -18,6 +18,7 @@
 package io.vertx.sqlclient.impl.pool;
 
 import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.impl.EventLoopContext;
 import io.vertx.core.impl.future.PromiseInternal;
 import io.vertx.sqlclient.PoolOptions;
 import io.vertx.sqlclient.impl.Connection;
@@ -44,7 +45,7 @@ import java.util.Set;
 public class ConnectionPool {
 
   private final ConnectionFactory connector;
-  private final ContextInternal context;
+  private final EventLoopContext context;
   private final int maxSize;
   private final ArrayDeque<Handler<AsyncResult<Connection>>> waiters = new ArrayDeque<>();
   private final Set<PooledConnection> all = new HashSet<>();
@@ -63,17 +64,17 @@ public class ConnectionPool {
     this(connector, null, maxSize, maxWaitQueueSize);
   }
 
-  public ConnectionPool(ConnectionFactory connector, Context context, int maxSize, int maxWaitQueueSize) {
+  public ConnectionPool(ConnectionFactory connector, EventLoopContext context, int maxSize, int maxWaitQueueSize) {
     this(connector, context, new PoolOptions().setMaxSize(maxSize).setMaxWaitQueueSize(maxWaitQueueSize));
   }
 
-  public ConnectionPool(ConnectionFactory connector, Context context, PoolOptions poolOptions) {
+  public ConnectionPool(ConnectionFactory connector, EventLoopContext context, PoolOptions poolOptions) {
     Objects.requireNonNull(connector, "No null connector");
     this.maxSize = poolOptions.getMaxSize();
     if (maxSize < 1) {
       throw new IllegalArgumentException("Pool max size must be > 0");
     }
-    this.context = (ContextInternal) context;
+    this.context = context;
     this.maxWaitQueueSize = poolOptions.getMaxWaitQueueSize();
     this.connectionReleaseDelay = poolOptions.getConnectionReleaseDelay();
     if (connectionReleaseDelay > 0 && context == null) {
@@ -303,7 +304,14 @@ public class ConnectionPool {
             if (size < maxSize) {
               Handler<AsyncResult<Connection>> waiter = waiters.poll();
               size++;
-              connector.connect().onComplete(ar -> {
+              Promise<Connection> promise;
+              if (context == null) {
+                promise = Promise.promise();
+              } else {
+                promise = context.promise();
+              }
+              connector.connect(promise);
+              promise.future().onComplete(ar -> {
                 if (ar.succeeded()) {
                   Connection conn = ar.result();
                   PooledConnection proxy = new PooledConnection(conn);

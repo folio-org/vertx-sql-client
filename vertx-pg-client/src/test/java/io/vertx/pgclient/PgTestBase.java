@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 
+import io.vertx.core.AsyncResult;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.pgclient.junit.ContainerPgRule;
@@ -69,5 +70,17 @@ public abstract class PgTestBase {
   static boolean hasSqlstateCode(Throwable throwable, String code) {
     return throwable instanceof PgException &&
         code.equals(((PgException) throwable).getCode());
+  }
+
+  /**
+   * Assert cause message to contain "closed", for example "Connection pool closed" or
+   * "Pending requests failed to be sent due to connection has been closed."
+   */
+  static <T> void assertClosedFailure(TestContext ctx, AsyncResult<T> ar) {
+    String msg = ar.cause().getMessage();
+    if (msg != null && msg.contains("closed")) {
+      return;
+    }
+    ctx.fail("Expected a string containing 'closed' but message was " + msg);
   }
 }

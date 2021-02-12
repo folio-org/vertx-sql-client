@@ -76,7 +76,7 @@ public class PgConnectionTest extends PgConnectionTestBase {
 
   @Test
   public void testQueueQueries(TestContext ctx) {
-    int num = 1000;
+    int num = 200;
     Async async = ctx.async(num + 1);
     connector.accept(ctx.asyncAssertSuccess(conn -> {
       for (int i = 0;i < num;i++) {
@@ -87,7 +87,7 @@ public class PgConnectionTest extends PgConnectionTestBase {
             SqlResult result = ar.result();
             ctx.assertEquals(10000, result.size());
           } else {
-            ctx.assertEquals("closed", ar.cause().getMessage());
+            assertClosedFailure(ctx, ar);
           }
           async.countDown();
         });
