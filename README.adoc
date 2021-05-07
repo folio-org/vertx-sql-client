@@ -42,7 +42,7 @@ What is the release version for "Vertx SQL Client parent, FOLIO fork"? (io.vertx
 
 What is SCM release tag or label for "Vertx SQL Client parent, FOLIO fork"? (io.vertx:vertx-sql-client-parent) vertx-sql-client-parent-4.0.3-FOLIO: :
 
-v4.0.4-FOLIO
+v4.0.3-FOLIO
 
 What is the new development version for "Vertx SQL Client parent, FOLIO fork"? (io.vertx:vertx-sql-client-parent) 4.0.4-FOLIO-SNAPSHOT: :
 

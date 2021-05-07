@@ -47,7 +47,7 @@
   </scm>
 
   <properties>
-    <stack.version>4.0.3</stack.version>
+    <stack.version>4.0.4-SNAPSHOT</stack.version>
     <doc.skip>true</doc.skip>
     <gpg.skip>true</gpg.skip> <!-- FOLIO doesn't sign -->
     <jmh.version>1.19</jmh.version>
