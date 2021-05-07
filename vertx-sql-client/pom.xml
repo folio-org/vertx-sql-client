@@ -27,9 +27,9 @@
 
   <artifactId>vertx-sql-client</artifactId>
 
-  <name>Vertx SQL Client</name>
-  <url>https://github.com/eclipse-vertx/vertx-sql-client</url>
-  <description>The Reactive SQL Client</description>
+  <name>Vertx SQL Client, FOLIO fork</name>
+  <url>https://github.com/folio-org/vertx-sql-client</url>
+  <description>The Reactive SQL Client, FOLIO fork</description>
 
 
   <properties>

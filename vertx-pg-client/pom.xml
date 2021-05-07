@@ -27,9 +27,9 @@
 
   <artifactId>vertx-pg-client</artifactId>
 
-  <name>Vertx PostgreSQL Client</name>
-  <url>https://github.com/eclipse-vertx/vertx-sql-client</url>
-  <description>The Reactive PostgreSQL Client</description>
+  <name>Vertx PostgreSQL Client, FOLIO fork</name>
+  <url>https://github.com/folio-org/vertx-sql-client</url>
+  <description>The Reactive PostgreSQL Client, FOLIO fork</description>
 
   <properties>
     <doc.skip>false</doc.skip>
@@ -59,6 +59,7 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-sql-client</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- sasl scram authentication -->
@@ -79,6 +80,7 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-sql-client</artifactId>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

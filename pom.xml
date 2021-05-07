@@ -28,9 +28,9 @@
   <version>4.0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Vertx SQL Client parent</name>
-  <url>https://github.com/eclipse-vertx/vertx-sql-client</url>
-  <description>The Reactive SQL Client parent</description>
+  <name>Vertx SQL Client parent, FOLIO fork</name>
+  <url>https://github.com/folio-org/vertx-sql-client</url>
+  <description>The Reactive SQL Client parent, FOLIO fork</description>
 
   <licenses>
     <license>
@@ -41,14 +41,15 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:eclipse-vertx/vertx-sql-client.git</connection>
-    <developerConnection>scm:git:git@github.com:eclipse-vertx/vertx-sql-client.git</developerConnection>
-    <url>git@github.com:eclipse-vertx/vertx-sql-client.git</url>
+    <connection>scm:git:git@github.com:folio-org/vertx-sql-client.git</connection>
+    <developerConnection>scm:git:git@github.com:folio-org/vertx-sql-client.git</developerConnection>
+    <url>git@github.com:folio-org/vertx-sql-client.git</url>
   </scm>
 
   <properties>
-    <stack.version>4.0.4-SNAPSHOT</stack.version>
+    <stack.version>4.0.3</stack.version>
     <doc.skip>true</doc.skip>
+    <gpg.skip>true</gpg.skip> <!-- FOLIO doesn't sign -->
     <jmh.version>1.19</jmh.version>
     <docs.dir>${project.basedir}/src/main/docs</docs.dir>
     <generated.dir>${project.basedir}/src/main/generated</generated.dir>
@@ -114,10 +115,12 @@
       <modules>
         <module>vertx-sql-client</module>
         <module>vertx-pg-client</module>
+<!-- not needed for FOLIO:
         <module>vertx-mysql-client</module>
         <module>vertx-mssql-client</module>
         <module>vertx-db2-client</module>
         <module>vertx-sql-client-templates</module>
+-->
       </modules>
     </profile>
     <profile>
@@ -218,5 +221,22 @@
       </modules>
     </profile>
   </profiles>
+
+  <distributionManagement>
+    <repository>
+      <id>folio-nexus</id>
+      <name>FOLIO Release Repository</name>
+      <url>https://repository.folio.org/repository/maven-releases/</url>
+      <uniqueVersion>false</uniqueVersion>
+      <layout>default</layout>
+    </repository>
+    <snapshotRepository>
+      <id>folio-nexus</id>
+      <name>FOLIO Snapshot Repository</name>
+      <uniqueVersion>true</uniqueVersion>
+      <url>https://repository.folio.org/repository/maven-snapshots/</url>
+      <layout>default</layout>
+    </snapshotRepository>
+  </distributionManagement>
 
 </project>
